@@ -1,0 +1,9 @@
+{
+  "uuid": "keyslot@neg-zero",
+  "name": "Keyslot",
+  "description": "Open and lock Keyslot from GNOME Quick Settings. Passwords stay in the application.",
+  "shell-version": ["50"],
+  "version": 1,
+  "url": "https://github.com/doromiert/keyslot-gnome-extension",
+  "session-modes": ["user"]
+}
