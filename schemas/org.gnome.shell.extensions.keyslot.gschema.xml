@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.keyslot" path="/org/gnome/shell/extensions/keyslot/">
+    <key name="auto-type" type="as">
+      <default>['&lt;Control&gt;&lt;Alt&gt;k']</default>
+      <summary>Open the Keyslot auto-type chooser</summary>
+    </key>
+  </schema>
+</schemalist>

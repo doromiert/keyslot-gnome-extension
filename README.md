@@ -3,14 +3,36 @@
 Companion extension for GNOME Shell 50. Adds a Keyslot tile in the system's
 Quick Settings menu. Clicking an unlocked tile locks all databases; clicking a
 locked tile opens the application. The submenu provides explicit Open and Lock
-actions. The Lock All action also cancels an in-progress unlock or other work.
+actions and the Auto-Type chooser. The Lock All action also cancels an in-progress unlock or other work.
 Installing this extension does not enable it.
 
 The application is a separate package, `com.neg-zero.keyslot`. The extension
-does not receive filenames, entry names, credentials, or unlock keys. The
-session-bus API exposes only `Locked`, `Busy`, `Background`, `Show`, `Lock`, and `Quit`. Unlocking
+does not receive vault credentials or unlock keys. The
+application session-bus API exposes `Locked`, `Busy`, `Background`, `Show`, `Lock`, `Quit`, and `AutoType`. Unlocking
 always happens in the application's window. It is disabled on the lock screen.
 Locked is true only when every database window is locked; Busy covers every window.
+
+Ctrl+Alt+K opens Auto-Type. On Wayland, an additional interface supplies the
+destination window title and a temporary focus lease only to Keyslot's current
+bus owner. Switching windows revokes that lease, even if focus returns later.
+The application requests keyboard access through the desktop portal; the
+extension does not accept keystrokes or secret fields. The shortcut is stored
+in `org.gnome.shell.extensions.keyslot` → `auto-type`.
+
+Version2/package0.2.0 also supports Keyslot's Lower Behind Other Windows copy
+preference. `AutoType1.Lower(s window_path) → b` accepts only the current Keyslot
+bus owner and the currently focused Keyslot compositor window, matching both
+its GTK unique bus name and window object path to the caller/request. The lock
+screen, overview, override-redirect windows, missing compositor actors and
+pending Auto-Type focus requests are rejected. Only that window is lowered; no
+other app is activated,
+and no entry data, clipboard text or keystrokes cross this call. The app handles
+an old/absent/disabled companion without a silent minimize fallback. Installing
+the package does not enable or reload it. This method has compilation/package
+and JavaScript syntax-only evidence; real Shell/X11/Wayland/focus/lifecycle
+acceptance is pending. No tests/harnesses or automated behavior runs were added
+or performed for this update; the historical results below cover the earlier
+extension checkpoint.
 
 With the app's Run in Background option enabled, this extension also adds the
 native app to GNOME's existing Background Apps menu. The row shows only generic
@@ -45,11 +67,12 @@ Quit, and disable cleanup. To repeat without changing your desktop:
 python3 tools/check-shell.py --app /path/to/keyslot/bin/keyslot
 ```
 
-The runner requires GNOME Shell 50, D-Bus, and a built app. It creates isolated
+The runner requires GNOME Shell 50, GJS/GTK4, GLib schema tools, D-Bus, and a built app. It creates isolated
 config/data/runtime directories and a private bus. A real login/lock-screen and
 other extensions' interaction still need manual acceptance.
 
-The source has not been published to a remote repository. ZenPkgs currently
-uses this sibling checkout as a development input.
+The hosted source is `doromiert/keyslot-gnome-extension`. ZenPkgs packages it
+separately as `desktops.gnome.extensions.keyslot`; the app is
+`apps.security.keyslot` from `zenos-n/keyslot`.
 
 License: GPL-3.0-only. See `LICENSE`.

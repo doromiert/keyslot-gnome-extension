@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import Gio from 'gi://Gio';
+import GLib from 'gi://GLib';
 import GObject from 'gi://GObject';
+import Meta from 'gi://Meta';
+import Shell from 'gi://Shell';
 import St from 'gi://St';
 import Clutter from 'gi://Clutter';
 import {ngettext} from 'gettext';
@@ -14,12 +17,131 @@ const BUS_NAME = 'com.neg-zero.keyslot';
 const OBJECT_PATH = '/com/neg_zero/keyslot/Vault1';
 const INTERFACE = 'com.neg_zero.keyslot.Vault1';
 const INTERFACE_XML = `<node><interface name="${INTERFACE}">
-  <method name="Show"/><method name="Lock"/><method name="Quit"/>
+  <method name="Show"/><method name="Lock"/><method name="Quit"/><method name="AutoType"/>
   <property name="Locked" type="b" access="read"/>
   <property name="Busy" type="b" access="read"/>
   <property name="Background" type="b" access="read"/>
 </interface></node>`;
 const VaultProxy = Gio.DBusProxy.makeProxyWrapper(INTERFACE_XML);
+
+// Only window metadata crosses this interface. Keyboard access goes through the desktop portal.
+const TARGET_XML = `<node><interface name="com.neg_zero.keyslot.AutoType1">
+  <method name="Capture"><arg type="s" direction="out"/><arg type="s" direction="out"/></method>
+  <method name="Focus"><arg type="s" direction="in"/><arg type="b" direction="out"/></method>
+  <method name="Check"><arg type="s" direction="in"/><arg type="b" direction="out"/></method>
+  <method name="Lower"><arg type="s" direction="in"/><arg type="b" direction="out"/></method>
+</interface></node>`;
+
+class AutoTypeTarget {
+    constructor(owner) {
+        this._owner = owner;
+        this._lease = null;
+        this._previous = null;
+        this._source = 0;
+        this._pending = null;
+        this._focusId = global.display.connect('notify::focus-window', () => this._changed());
+        this._changed();
+        this._object = Gio.DBusExportedObject.wrapJSObject(TARGET_XML, this);
+        this._object.export(Gio.DBus.session, '/com/neg_zero/keyslot/AutoType1');
+    }
+
+    _changed() {
+        const window = global.display.focus_window;
+        if (this._lease?.armed && window !== this._lease.window)
+            this._lease = null;
+        if (window && !this._isKeyslot(window) && !window.is_override_redirect())
+            this._previous = window;
+    }
+
+    _isKeyslot(window) {
+        return window.get_gtk_application_id() === BUS_NAME
+            || Shell.WindowTracker.get_default().get_window_app(window)?.get_id() === `${BUS_NAME}.desktop`;
+    }
+
+    _authorized(invocation) {
+        if (this._owner() && invocation.get_sender() === this._owner())
+            return true;
+        invocation.return_dbus_error('org.freedesktop.DBus.Error.AccessDenied', 'Only Keyslot may use this interface');
+        return false;
+    }
+
+    _valid(token) {
+        const lease = this._lease;
+        return Boolean(lease && lease.token === token && lease.owner === this._owner()
+            && GLib.get_monotonic_time() < lease.expires && !Main.sessionMode.isLocked
+            && lease.window.get_compositor_private() && !this._isKeyslot(lease.window));
+    }
+
+    CaptureAsync(_parameters, invocation) {
+        if (!this._authorized(invocation))
+            return;
+        const focused = global.display.focus_window;
+        const window = focused && !this._isKeyslot(focused) ? focused : this._previous;
+        this._lease = null;
+        if (!window || !window.get_compositor_private() || this._isKeyslot(window) || Main.sessionMode.isLocked) {
+            invocation.return_value(new GLib.Variant('(ss)', ['', '']));
+            return;
+        }
+        const token = GLib.uuid_string_random();
+        this._lease = {token, window, armed: false, owner: this._owner(),
+            expires: GLib.get_monotonic_time() + 240 * GLib.USEC_PER_SEC};
+        invocation.return_value(new GLib.Variant('(ss)', [token, window.get_title() ?? 'Untitled Window']));
+    }
+
+    FocusAsync([token], invocation) {
+        if (!this._authorized(invocation))
+            return;
+        if (!this._valid(token) || this._pending) {
+            invocation.return_value(new GLib.Variant('(b)', [false]));
+            return;
+        }
+        Main.activateWindow(this._lease.window);
+        this._pending = invocation;
+        const end = GLib.get_monotonic_time() + GLib.USEC_PER_SEC;
+        this._source = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 25, () => {
+            const active = this._valid(token) && global.display.focus_window === this._lease.window;
+            if (!active && this._valid(token) && GLib.get_monotonic_time() < end)
+                return GLib.SOURCE_CONTINUE;
+            if (active)
+                this._lease.armed = true;
+            this._pending.return_value(new GLib.Variant('(b)', [Boolean(active)]));
+            this._pending = null;
+            this._source = 0;
+            return GLib.SOURCE_REMOVE;
+        });
+    }
+
+    CheckAsync([token], invocation) {
+        if (this._authorized(invocation))
+            invocation.return_value(new GLib.Variant('(b)', [Boolean(this._valid(token)
+                && this._lease.armed && global.display.focus_window === this._lease.window
+                && !Main.overview.visible)]));
+    }
+
+    LowerAsync([path], invocation) {
+        if (!this._authorized(invocation))
+            return;
+        const window = global.display.focus_window;
+        const allowed = Boolean(window && path && this._isKeyslot(window)
+            && window.get_gtk_unique_bus_name() === invocation.get_sender()
+            && window.get_gtk_window_object_path() === path
+            && window.get_compositor_private() && !window.is_override_redirect()
+            && !Main.sessionMode.isLocked && !Main.overview.visible && !this._pending);
+        if (allowed)
+            window.lower();
+        invocation.return_value(new GLib.Variant('(b)', [allowed]));
+    }
+
+    destroy() {
+        if (this._source)
+            GLib.source_remove(this._source);
+        this._pending?.return_value(new GLib.Variant('(b)', [false]));
+        this._pending = null;
+        this._lease = this._previous = null;
+        global.display.disconnect(this._focusId);
+        this._object.unexport();
+    }
+}
 
 const VaultToggle = GObject.registerClass(
 class VaultToggle extends QuickSettings.QuickMenuToggle {
@@ -35,6 +157,7 @@ class VaultToggle extends QuickSettings.QuickMenuToggle {
         this._installBackgroundIntegration();
         this.menu.setHeader('dialog-password-symbolic', _('Keyslot'), _('Password Manager'));
         this.menu.addAction(_('Open Keyslot'), () => this._call('Show'));
+        this.menu.addAction(_('Auto-Type…'), () => this._call('AutoType'));
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
         this._lockAction = this.menu.addAction(_('Lock All Databases'), () => this._call('Lock'));
         this._proxy = new VaultProxy(Gio.DBus.session, BUS_NAME, OBJECT_PATH,
@@ -179,9 +302,17 @@ export default class KeyslotExtension extends Extension {
     enable() {
         this._indicator = new VaultIndicator();
         Main.panel.statusArea.quickSettings.addExternalIndicator(this._indicator);
+        this._target = new AutoTypeTarget(() => this._indicator?.quickSettingsItems[0]?._proxy?.g_name_owner);
+        this._settings = this.getSettings();
+        Main.wm.addKeybinding('auto-type', this._settings, Meta.KeyBindingFlags.NONE,
+            Shell.ActionMode.NORMAL, () => this._indicator.quickSettingsItems[0]._call('AutoType'));
     }
 
     disable() {
+        Main.wm.removeKeybinding('auto-type');
+        this._settings = null;
+        this._target?.destroy();
+        this._target = null;
         this._indicator?.destroy();
         this._indicator = null;
     }
