@@ -6,9 +6,7 @@ import Meta from 'gi://Meta';
 import Shell from 'gi://Shell';
 import St from 'gi://St';
 import Clutter from 'gi://Clutter';
-import {ngettext} from 'gettext';
-
-import {Extension, InjectionManager, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
+import {Extension, InjectionManager, gettext as _, ngettext} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import * as QuickSettings from 'resource:///org/gnome/shell/ui/quickSettings.js';
@@ -301,6 +299,7 @@ class VaultIndicator extends QuickSettings.SystemIndicator {
 
 export default class KeyslotExtension extends Extension {
     enable() {
+        this.initTranslations();
         this._shortcutSerial = (this._shortcutSerial ?? 0) + 1;
         this._shortcutCancellable = new Gio.Cancellable();
         this._shortcutFocusId = global.display.connect('notify::focus-window', () => this._shortcutSerial++);

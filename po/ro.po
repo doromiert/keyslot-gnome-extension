@@ -1,0 +1,171 @@
+# Keyslot GNOME extension translations.
+msgid ""
+msgstr ""
+"Project-Id-Version: Keyslot GNOME extension 0.4.0\n"
+"Report-Msgid-Bugs-To: https://github.com/zenos-n/keyslot-gnome-extension/issues\n"
+"Language: ro\n"
+"PO-Revision-Date: 2026-11-02 00:00+0000\n"
+"Last-Translator: Keyslot Contributors\n"
+"Language-Team: Keyslot extension translators\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n==0 || (n%100>0 && n%100<20) ? 1 : 2);\n"
+
+msgid "Add Shortcut"
+msgstr "Adăugați o comandă rapidă"
+
+msgid "Add a shortcut to enable it."
+msgstr "Adăugați o comandă rapidă pentru a o activa."
+
+msgid "Auto-Type…"
+msgstr "Tastare automată…"
+
+msgid "Cancel"
+msgstr "Anulați"
+
+msgid "Change Shortcut"
+msgstr "Schimbați comanda rapidă"
+
+msgid "Could not reach Keyslot. Check that the application is installed."
+msgstr "Keyslot nu a putut fi accesat. Verificați dacă aplicația este instalată."
+
+msgid "Desktop Auto-Type"
+msgstr "Tastare automată de pe desktop"
+
+msgid "Desktop Auto-Type Disabled"
+msgstr "Tastarea automată de pe desktop este dezactivată"
+
+msgid "Desktop policy prevents changing these shortcuts."
+msgstr "Politica desktopului nu permite modificarea acestor comenzi rapide."
+
+msgid "Empty binding"
+msgstr "Legătură goală"
+
+msgid "If another desktop action uses your combination, choose a different one."
+msgstr "Dacă o altă acțiune de pe desktop folosește combinația, alegeți alta."
+
+msgid "Keyboard Shortcuts"
+msgstr "Comenzi rapide de tastatură"
+
+msgid "Keyslot"
+msgstr "Keyslot"
+
+msgid "Lock All Databases"
+msgstr "Blocați toate bazele de date"
+
+msgid "Locked"
+msgstr "Blocat"
+
+msgid "No Background Apps"
+msgstr "Nicio aplicație în fundal"
+
+msgid "Not Running"
+msgstr "Nu rulează"
+
+msgid "Open Keyslot"
+msgstr "Deschideți Keyslot"
+
+msgid "Open Keyslot from another application. Default: Ctrl+Alt+K. "
+msgstr "Deschideți Keyslot din altă aplicație. Implicit: Ctrl+Alt+K. "
+
+msgid "Password Manager"
+msgstr "Manager de parole"
+
+msgid "Press a key combination"
+msgstr "Apăsați o combinație de taste"
+
+msgid "Quit Keyslot"
+msgstr "Închideți Keyslot"
+
+msgid "Remove Shortcut"
+msgstr "Eliminați comanda rapidă"
+
+msgid "Reset Auto-Type Shortcuts"
+msgstr "Resetați comenzile rapide de tastare automată"
+
+msgid "Set Auto-Type Shortcut"
+msgstr "Setați comanda rapidă pentru tastarea automată"
+
+msgid "Shortcuts changed elsewhere. Try again."
+msgstr "Comenzile rapide s-au modificat în altă parte. Încercați din nou."
+
+msgid "The desktop cannot capture shortcuts in this window."
+msgstr "Desktopul nu poate captura comenzi rapide în această fereastră."
+
+msgid "The desktop could not start shortcut recording. Use Escape to cancel."
+msgstr "Desktopul nu a putut începe înregistrarea comenzii rapide. Folosiți Escape pentru a anula."
+
+msgid "The shortcut could not be saved."
+msgstr "Comanda rapidă nu a putut fi salvată."
+
+msgid "The shortcut was not saved. Close this recorder and try again."
+msgstr "Comanda rapidă nu a fost salvată. Închideți această fereastră de înregistrare și încercați din nou."
+
+msgid "The shortcuts could not be reset."
+msgstr "Comenzile rapide nu au putut fi resetate."
+
+msgid "This shortcut is already in the list."
+msgstr "Această comandă rapidă este deja în listă."
+
+msgid "Unlocked"
+msgstr "Deblocat"
+
+msgid "Unsupported binding. Change or remove it."
+msgstr "Legătură neacceptată. Schimbați-o sau eliminați-o."
+
+msgid "Use Escape to cancel."
+msgstr "Folosiți Escape pentru a anula."
+
+msgid "Use a function key or a combination with Ctrl, Alt, Super, Meta or Hyper."
+msgstr "Folosiți o tastă funcțională sau o combinație cu Ctrl, Alt, Super, Meta ori Hyper."
+
+msgid "Use a function key or add Ctrl, Alt, Super, Meta or Hyper."
+msgstr "Folosiți o tastă funcțională sau adăugați Ctrl, Alt, Super, Meta ori Hyper."
+
+msgid "Vaults Locked"
+msgstr "Seifuri blocate"
+
+msgid "Vaults Unlocked"
+msgstr "Seifuri deblocate"
+
+msgid "Waiting for desktop shortcut capture. Allow it if the desktop asks."
+msgstr "Se așteaptă capturarea comenzii rapide de către desktop. Permiteți dacă desktopul solicită acest lucru."
+
+msgid "Working…"
+msgstr "Se lucrează…"
+
+
+msgid "Browser Access"
+msgstr "Accesul browserului"
+
+msgid "Password Database"
+msgstr "Baza de date cu parole"
+
+msgid "Sign-in form destination:"
+msgstr "Destinația formularului de autentificare:"
+
+msgid "Untitled Entry"
+msgstr "Intrare fără titlu"
+
+msgid "Remember This Decision"
+msgstr "Reține această decizie"
+
+msgid "Full trust shares matching logins automatically in this database. Hidden entries and denied websites stay blocked. Revoke trust in Browser Connections."
+msgstr "Încrederea deplină partajează automat datele de autentificare potrivite în această bază de date. Intrările ascunse și site-urile refuzate rămân blocate. Revocați încrederea în Conexiuni browser."
+
+msgid "Fully Trust This Browser"
+msgstr "Acordați încredere deplină acestui browser"
+
+msgid "Deny"
+msgstr "Refuzați"
+
+msgid "Allow Selected"
+msgstr "Permiteți selecția"
+
+#, c-format
+msgid "%d Background App"
+msgid_plural "%d Background Apps"
+msgstr[0] "%d aplicație în fundal"
+msgstr[1] "%d aplicații în fundal"
+msgstr[2] "%d aplicații în fundal"

@@ -17,11 +17,12 @@ const canonical = value => {
 
 export default class KeyslotPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
+        const _ = this.gettext.bind(this);
         const settings = this.getSettings();
-        const page = new Adw.PreferencesPage({title: 'Keyboard Shortcuts', icon_name: 'input-keyboard-symbolic'});
-        const group = new Adw.PreferencesGroup({title: 'Desktop Auto-Type',
-            description: 'Open Keyslot from another application. Default: Ctrl+Alt+K. ' +
-                'If another desktop action uses your combination, choose a different one.'});
+        const page = new Adw.PreferencesPage({title: _('Keyboard Shortcuts'), icon_name: 'input-keyboard-symbolic'});
+        const group = new Adw.PreferencesGroup({title: _('Desktop Auto-Type'),
+            description: _('Open Keyslot from another application. Default: Ctrl+Alt+K. ') +
+                _('If another desktop action uses your combination, choose a different one.')});
         const status = new Gtk.Label({wrap: true, xalign: 0, css_classes: ['error'], visible: false});
         const notices = new Adw.PreferencesGroup();
         notices.add(status);
@@ -41,7 +42,7 @@ export default class KeyslotPreferences extends ExtensionPreferences {
             if (closed)
                 return false;
             if (!settings.is_writable(KEY)) {
-                error('Desktop policy prevents changing these shortcuts.');
+                error(_('Desktop policy prevents changing these shortcuts.'));
                 return false;
             }
             return true;
@@ -50,7 +51,7 @@ export default class KeyslotPreferences extends ExtensionPreferences {
             if (!writable())
                 return false;
             if (!same(settings.get_strv(KEY), expected)) {
-                error('Shortcuts changed elsewhere. Try again.');
+                error(_('Shortcuts changed elsewhere. Try again.'));
                 return false;
             }
             try {
@@ -59,7 +60,7 @@ export default class KeyslotPreferences extends ExtensionPreferences {
                 error('');
                 return true;
             } catch {
-                error('The shortcut could not be saved.');
+                error(_('The shortcut could not be saved.'));
                 return false;
             }
         };
@@ -68,10 +69,10 @@ export default class KeyslotPreferences extends ExtensionPreferences {
                 return;
             const surface = window.get_surface();
             if (!surface || typeof surface.inhibit_system_shortcuts !== 'function') {
-                error('The desktop cannot capture shortcuts in this window.');
+                error(_('The desktop cannot capture shortcuts in this window.'));
                 return;
             }
-            const dialog = new Adw.Dialog({title: 'Set Auto-Type Shortcut', content_width: 420,
+            const dialog = new Adw.Dialog({title: _('Set Auto-Type Shortcut'), content_width: 420,
                 content_height: 280, can_close: false});
             const toolbar = new Adw.ToolbarView();
             const header = new Adw.HeaderBar();
@@ -79,8 +80,8 @@ export default class KeyslotPreferences extends ExtensionPreferences {
             const box = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL, spacing: 16,
                 margin_top: 24, margin_bottom: 24, margin_start: 24, margin_end: 24});
             box.append(new Gtk.Image({icon_name: 'input-keyboard-symbolic', pixel_size: 48}));
-            box.append(new Gtk.Label({label: 'Press a key combination', wrap: true, css_classes: ['title-3']}));
-            box.append(new Gtk.Label({label: 'Use Escape to cancel.', wrap: true}));
+            box.append(new Gtk.Label({label: _('Press a key combination'), wrap: true, css_classes: ['title-3']}));
+            box.append(new Gtk.Label({label: _('Use Escape to cancel.'), wrap: true}));
             const message = new Gtk.Label({wrap: true});
             box.append(message);
             toolbar.set_content(box);
@@ -104,14 +105,14 @@ export default class KeyslotPreferences extends ExtensionPreferences {
                 cleanup();
                 dialog.force_close();
             };
-            const cancel = new Gtk.Button({label: 'Cancel', valign: Gtk.Align.CENTER});
+            const cancel = new Gtk.Button({label: _('Cancel'), valign: Gtk.Align.CENTER});
             cancel.connect('clicked', finish);
             header.pack_start(cancel);
             recording = {finish};
             const ready = () => {
                 message.set_label(surface.shortcuts_inhibited
-                    ? 'Use a function key or a combination with Ctrl, Alt, Super, Meta or Hyper.'
-                    : 'Waiting for desktop shortcut capture. Allow it if the desktop asks.');
+                    ? _('Use a function key or a combination with Ctrl, Alt, Super, Meta or Hyper.')
+                    : _('Waiting for desktop shortcut capture. Allow it if the desktop asks.'));
             };
             signal = surface.connect('notify::shortcuts-inhibited', ready);
             dialog.connect('closed', cleanup);
@@ -137,12 +138,12 @@ export default class KeyslotPreferences extends ExtensionPreferences {
                 if (!Gtk.accelerator_valid(key, modifiers))
                     return true;
                 if (!(modifiers & ~Gdk.ModifierType.SHIFT_MASK) && !(key >= Gdk.KEY_F1 && key <= Gdk.KEY_F35)) {
-                    message.set_label('Use a function key or add Ctrl, Alt, Super, Meta or Hyper.');
+                    message.set_label(_('Use a function key or add Ctrl, Alt, Super, Meta or Hyper.'));
                     return true;
                 }
                 const value = Gtk.accelerator_name(key, modifiers);
                 if (expected.some((old, position) => position !== index && canonical(old) === canonical(value))) {
-                    message.set_label('This shortcut is already in the list.');
+                    message.set_label(_('This shortcut is already in the list.'));
                     return true;
                 }
                 const next = [...expected];
@@ -153,7 +154,7 @@ export default class KeyslotPreferences extends ExtensionPreferences {
                 if (write(next, expected))
                     finish();
                 else
-                    message.set_label('The shortcut was not saved. Close this recorder and try again.');
+                    message.set_label(_('The shortcut was not saved. Close this recorder and try again.'));
                 return true;
             });
             dialog.add_controller(controller);
@@ -162,13 +163,13 @@ export default class KeyslotPreferences extends ExtensionPreferences {
                 surface.inhibit_system_shortcuts(null);
                 ready();
             } catch {
-                message.set_label('The desktop could not start shortcut recording. Use Escape to cancel.');
+                message.set_label(_('The desktop could not start shortcut recording. Use Escape to cancel.'));
             }
         };
         const controls = new Gtk.Box({spacing: 6});
-        const add = new Gtk.Button({icon_name: 'list-add-symbolic', tooltip_text: 'Add Shortcut',
+        const add = new Gtk.Button({icon_name: 'list-add-symbolic', tooltip_text: _('Add Shortcut'),
             valign: Gtk.Align.CENTER, css_classes: ['flat']});
-        const reset = new Gtk.Button({icon_name: 'edit-undo-symbolic', tooltip_text: 'Reset Auto-Type Shortcuts',
+        const reset = new Gtk.Button({icon_name: 'edit-undo-symbolic', tooltip_text: _('Reset Auto-Type Shortcuts'),
             valign: Gtk.Align.CENTER, css_classes: ['flat']});
         controls.append(add);
         controls.append(reset);
@@ -181,7 +182,7 @@ export default class KeyslotPreferences extends ExtensionPreferences {
                 settings.reset(KEY);
                 error('');
             } catch {
-                error('The shortcuts could not be reset.');
+                error(_('The shortcuts could not be reset.'));
             }
         });
         const refresh = () => {
@@ -193,11 +194,11 @@ export default class KeyslotPreferences extends ExtensionPreferences {
             values.forEach((value, index) => {
                 const [valid, key, modifiers] = Gtk.accelerator_parse(value);
                 const supported = valid && key && Gtk.accelerator_valid(key, modifiers);
-                const row = new Adw.ActionRow({title: supported ? Gtk.accelerator_get_label(key, modifiers) : (value || 'Empty binding'),
-                    subtitle: supported ? '' : 'Unsupported binding. Change or remove it.', use_markup: false});
-                const change = new Gtk.Button({icon_name: 'document-edit-symbolic', tooltip_text: 'Change Shortcut',
+                const row = new Adw.ActionRow({title: supported ? Gtk.accelerator_get_label(key, modifiers) : (value || _('Empty binding')),
+                    subtitle: supported ? '' : _('Unsupported binding. Change or remove it.'), use_markup: false});
+                const change = new Gtk.Button({icon_name: 'document-edit-symbolic', tooltip_text: _('Change Shortcut'),
                     valign: Gtk.Align.CENTER, css_classes: ['flat']});
-                const remove = new Gtk.Button({icon_name: 'edit-delete-symbolic', tooltip_text: 'Remove Shortcut',
+                const remove = new Gtk.Button({icon_name: 'edit-delete-symbolic', tooltip_text: _('Remove Shortcut'),
                     valign: Gtk.Align.CENTER, css_classes: ['flat']});
                 change.connect('clicked', () => record(values, index));
                 remove.connect('clicked', () => write(values.filter((_value, position) => position !== index), values));
@@ -208,14 +209,14 @@ export default class KeyslotPreferences extends ExtensionPreferences {
                 rows.push(row);
             });
             if (!values.length) {
-                const row = new Adw.ActionRow({title: 'Desktop Auto-Type Disabled',
-                    subtitle: 'Add a shortcut to enable it.'});
+                const row = new Adw.ActionRow({title: _('Desktop Auto-Type Disabled'),
+                    subtitle: _('Add a shortcut to enable it.')});
                 group.add(row);
                 rows.push(row);
             }
             group.set_sensitive(settings.is_writable(KEY));
             if (!settings.is_writable(KEY))
-                error('Desktop policy prevents changing these shortcuts.');
+                error(_('Desktop policy prevents changing these shortcuts.'));
         };
         const signals = [settings.connect(`changed::${KEY}`, refresh),
             settings.connect(`writable-changed::${KEY}`, refresh)];

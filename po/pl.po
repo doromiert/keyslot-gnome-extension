@@ -1,0 +1,171 @@
+# Keyslot GNOME extension translations.
+msgid ""
+msgstr ""
+"Project-Id-Version: Keyslot GNOME extension 0.4.0\n"
+"Report-Msgid-Bugs-To: https://github.com/zenos-n/keyslot-gnome-extension/issues\n"
+"Language: pl\n"
+"PO-Revision-Date: 2026-11-02 00:00+0000\n"
+"Last-Translator: Keyslot Contributors\n"
+"Language-Team: Keyslot extension translators\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+
+msgid "Add Shortcut"
+msgstr "Dodaj skrót"
+
+msgid "Add a shortcut to enable it."
+msgstr "Dodaj skrót, aby ją włączyć."
+
+msgid "Auto-Type…"
+msgstr "Automatyczne wpisywanie…"
+
+msgid "Cancel"
+msgstr "Anuluj"
+
+msgid "Change Shortcut"
+msgstr "Zmień skrót"
+
+msgid "Could not reach Keyslot. Check that the application is installed."
+msgstr "Nie można połączyć się z Keyslot. Sprawdź, czy aplikacja jest zainstalowana."
+
+msgid "Desktop Auto-Type"
+msgstr "Automatyczne wpisywanie z pulpitu"
+
+msgid "Desktop Auto-Type Disabled"
+msgstr "Automatyczne wpisywanie z pulpitu wyłączone"
+
+msgid "Desktop policy prevents changing these shortcuts."
+msgstr "Zasady pulpitu nie pozwalają zmieniać tych skrótów."
+
+msgid "Empty binding"
+msgstr "Puste przypisanie"
+
+msgid "If another desktop action uses your combination, choose a different one."
+msgstr "Jeśli inna czynność pulpitu używa tej kombinacji, wybierz inną."
+
+msgid "Keyboard Shortcuts"
+msgstr "Skróty klawiaturowe"
+
+msgid "Keyslot"
+msgstr "Keyslot"
+
+msgid "Lock All Databases"
+msgstr "Zablokuj wszystkie bazy danych"
+
+msgid "Locked"
+msgstr "Zablokowano"
+
+msgid "No Background Apps"
+msgstr "Brak aplikacji działających w tle"
+
+msgid "Not Running"
+msgstr "Nie działa"
+
+msgid "Open Keyslot"
+msgstr "Otwórz Keyslot"
+
+msgid "Open Keyslot from another application. Default: Ctrl+Alt+K. "
+msgstr "Otwórz Keyslot z innej aplikacji. Domyślnie: Ctrl+Alt+K. "
+
+msgid "Password Manager"
+msgstr "Menedżer haseł"
+
+msgid "Press a key combination"
+msgstr "Naciśnij kombinację klawiszy"
+
+msgid "Quit Keyslot"
+msgstr "Zakończ Keyslot"
+
+msgid "Remove Shortcut"
+msgstr "Usuń skrót"
+
+msgid "Reset Auto-Type Shortcuts"
+msgstr "Przywróć domyślne skróty automatycznego wpisywania"
+
+msgid "Set Auto-Type Shortcut"
+msgstr "Ustaw skrót automatycznego wpisywania"
+
+msgid "Shortcuts changed elsewhere. Try again."
+msgstr "Skróty zmieniono w innym miejscu. Spróbuj ponownie."
+
+msgid "The desktop cannot capture shortcuts in this window."
+msgstr "Pulpit nie może przechwycić skrótów w tym oknie."
+
+msgid "The desktop could not start shortcut recording. Use Escape to cancel."
+msgstr "Pulpit nie może rozpocząć rejestrowania skrótu. Naciśnij Escape, aby anulować."
+
+msgid "The shortcut could not be saved."
+msgstr "Nie można zapisać skrótu."
+
+msgid "The shortcut was not saved. Close this recorder and try again."
+msgstr "Nie zapisano skrótu. Zamknij to okno rejestrowania i spróbuj ponownie."
+
+msgid "The shortcuts could not be reset."
+msgstr "Nie można przywrócić domyślnych skrótów."
+
+msgid "This shortcut is already in the list."
+msgstr "Ten skrót znajduje się już na liście."
+
+msgid "Unlocked"
+msgstr "Odblokowano"
+
+msgid "Unsupported binding. Change or remove it."
+msgstr "Nieobsługiwane przypisanie. Zmień je lub usuń."
+
+msgid "Use Escape to cancel."
+msgstr "Naciśnij Escape, aby anulować."
+
+msgid "Use a function key or a combination with Ctrl, Alt, Super, Meta or Hyper."
+msgstr "Użyj klawisza funkcyjnego lub kombinacji z Ctrl, Alt, Super, Meta albo Hyper."
+
+msgid "Use a function key or add Ctrl, Alt, Super, Meta or Hyper."
+msgstr "Użyj klawisza funkcyjnego lub dodaj Ctrl, Alt, Super, Meta albo Hyper."
+
+msgid "Vaults Locked"
+msgstr "Sejfy zablokowane"
+
+msgid "Vaults Unlocked"
+msgstr "Sejfy odblokowane"
+
+msgid "Waiting for desktop shortcut capture. Allow it if the desktop asks."
+msgstr "Oczekiwanie na przechwycenie skrótu przez pulpit. Zezwól, jeśli pulpit o to poprosi."
+
+msgid "Working…"
+msgstr "Pracuje…"
+
+
+msgid "Browser Access"
+msgstr "Dostęp przeglądarki"
+
+msgid "Password Database"
+msgstr "Baza haseł"
+
+msgid "Sign-in form destination:"
+msgstr "Cel formularza logowania:"
+
+msgid "Untitled Entry"
+msgstr "Wpis bez tytułu"
+
+msgid "Remember This Decision"
+msgstr "Zapamiętaj tę decyzję"
+
+msgid "Full trust shares matching logins automatically in this database. Hidden entries and denied websites stay blocked. Revoke trust in Browser Connections."
+msgstr "Pełne zaufanie automatycznie udostępnia pasujące dane logowania w tej bazie danych. Ukryte wpisy i zablokowane witryny pozostają zablokowane. Cofnij zaufanie w Połączeniach z przeglądarką."
+
+msgid "Fully Trust This Browser"
+msgstr "W pełni zaufaj tej przeglądarce"
+
+msgid "Deny"
+msgstr "Odmów"
+
+msgid "Allow Selected"
+msgstr "Zezwól na wybrane"
+
+#, c-format
+msgid "%d Background App"
+msgid_plural "%d Background Apps"
+msgstr[0] "%d aplikacja w tle"
+msgstr[1] "%d aplikacje w tle"
+msgstr[2] "%d aplikacji w tle"
