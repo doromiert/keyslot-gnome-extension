@@ -1,0 +1,23 @@
+.keyslot-browser-approval {
+    width: 28em;
+}
+
+.keyslot-browser-approval .modal-dialog-content-box {
+    spacing: 16px;
+}
+
+.keyslot-browser-origin {
+    font-weight: bold;
+}
+
+.keyslot-browser-entries {
+    max-height: 14em;
+}
+
+.keyslot-browser-entries .check-box {
+    padding: 8px 0;
+}
+
+.keyslot-browser-explanation {
+    font-size: 0.9em;
+}

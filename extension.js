@@ -12,6 +12,7 @@ import {Extension, InjectionManager, gettext as _} from 'resource:///org/gnome/s
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import * as QuickSettings from 'resource:///org/gnome/shell/ui/quickSettings.js';
+import {BrowserApprovals} from './browserApproval.js';
 
 const BUS_NAME = 'com.neg-zero.keyslot';
 const OBJECT_PATH = '/com/neg_zero/keyslot/Vault1';
@@ -306,6 +307,7 @@ export default class KeyslotExtension extends Extension {
         this._indicator = new VaultIndicator();
         Main.panel.statusArea.quickSettings.addExternalIndicator(this._indicator);
         this._target = new AutoTypeTarget(() => this._indicator?.quickSettingsItems[0]?._proxy?.g_name_owner);
+        this._browserApprovals = new BrowserApprovals(() => this._indicator?.quickSettingsItems[0]?._proxy?.g_name_owner);
         this._settings = this.getSettings();
         Main.wm.addKeybinding('auto-type', this._settings, Meta.KeyBindingFlags.NONE,
             Shell.ActionMode.NORMAL, () => this._autoTypeShortcut());
@@ -355,6 +357,8 @@ export default class KeyslotExtension extends Extension {
     }
 
     disable() {
+        this._browserApprovals?.destroy();
+        this._browserApprovals = null;
         this._shortcutSerial++;
         this._shortcutCancellable?.cancel();
         this._shortcutCancellable = null;

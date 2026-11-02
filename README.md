@@ -6,6 +6,26 @@ locked tile opens the application. The submenu provides explicit Open and Lock
 actions and the Auto-Type chooser. The Lock All action also cancels an in-progress unlock or other work.
 Installing this extension does not enable it.
 
+Version4/package0.4.0 adds a compact Shell approval dialog for browser password
+access. With a matching Keyslot app, this avoids opening its main window and
+works independently of notification DND. It shows connection/website/form and
+entry display metadata, never secret values. Allow Selected, Deny, Remember This
+Decision and Fully Trust This Browser match the app's access controls. Trust is
+stored in the encrypted database by the app's native helper and can be removed
+under Database Settings → Browser Connections. It bypasses repeated matching
+login/HTTP-auth prompts; hidden/denied/recycled/expired entries and connection
+restrictions still apply. Saves, deletes, pairing, unlock and passkey ceremonies
+retain their application dialogs. The app falls back to GTK when this interface
+is absent, not when the user cancels it.
+
+The exported Browser1 interface accepts only the app's current unique bus owner.
+Owner loss, lock, disable, explicit cancellation and a25-second deadline remove
+the prompt immediately. One prompt is active at a time; Escape denies. DND is
+not modified. This update has package/schema compilation, JavaScript syntax and
+static source evidence only. No tests/harnesses or Shell/browser/GTK/vault runs
+were performed. Actual approval, DND, cancellation, trust and accessibility
+acceptance remains manual; updating the package does not reload the extension.
+
 The application is a separate package, `com.neg-zero.keyslot`. The extension
 does not receive vault credentials or unlock keys. The
 application session-bus API exposes `Locked`, `Busy`, `Background`, `Show`, `Lock`, `Quit`, and `AutoType`. Unlocking
