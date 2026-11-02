@@ -3,7 +3,7 @@
   "name": "Keyslot",
   "description": "Open and lock Keyslot from GNOME Quick Settings. Passwords stay in the application.",
   "shell-version": ["50"],
-  "version": 2,
+  "version": 3,
   "settings-schema": "org.gnome.shell.extensions.keyslot",
   "url": "https://github.com/doromiert/keyslot-gnome-extension",
   "session-modes": ["user"]

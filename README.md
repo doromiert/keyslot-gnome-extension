@@ -12,12 +12,39 @@ application session-bus API exposes `Locked`, `Busy`, `Background`, `Show`, `Loc
 always happens in the application's window. It is disabled on the lock screen.
 Locked is true only when every database window is locked; Busy covers every window.
 
-Ctrl+Alt+K opens Auto-Type. On Wayland, an additional interface supplies the
+By default, Ctrl+Alt+K opens Auto-Type. On Wayland, an additional interface supplies the
 destination window title and a temporary focus lease only to Keyslot's current
 bus owner. Switching windows revokes that lease, even if focus returns later.
 The application requests keyboard access through the desktop portal; the
 extension does not accept keystrokes or secret fields. The shortcut is stored
 in `org.gnome.shell.extensions.keyslot` → `auto-type`.
+
+Version3/package0.3.0 adds GTK4/libadwaita preferences for that setting. GNOME
+Extensions → Keyslot → Settings, or Desktop Auto-Type Shortcuts in Keyslot,
+opens the editor. Add/change/remove aliases, remove all to disable, or reset to
+the default. Read-only desktop policy is respected; existing unsupported values
+are preserved until explicitly changed/removed. New aliases are checked for
+own-list duplicates; conflicts with other desktop actions are not enumerated.
+Detected intervening settings changes are refused before writing (GSettings
+has no atomic compare-and-swap here). Changes use the live Shell binding.
+
+The recorder requests Gdk toplevel shortcut inhibition, waits for compositor
+confirmation, and restores shortcuts on close/save/cancel. Cancel or Escape
+leaves the setting unchanged. If the desktop denies capture, cancel the recorder.
+The global hotkey also refuses to invoke Auto-Type into GNOME extension
+preferences: a no-auto-start D-Bus owner/PID check, with focus-generation and
+request-serial guards, cancels on unknown metadata/service errors/focus changes.
+This protects the recorder while inhibition is pending or revoked and applies
+conservatively to all GNOME extension preferences windows. The extension sends
+no credential/keystroke payload. Install/upgrade does not reload an already
+running extension; the user must load version3 before trying the new recorder.
+
+This update has package/schema compilation and JavaScript syntax-only evidence.
+No tests/harnesses or automated preferences/Shell/GTK/shortcut/focus/settings/
+vault/typing behavior runs were added/performed. Actual GNOME50/X11/Wayland
+recording, grant/denial/revocation, modifier/layout/alias handling, readonly/
+concurrent writes, service/focus/disable lifecycle and accessibility remain
+manual acceptance. Historical results below concern an earlier checkpoint.
 
 Version2/package0.2.0 also supports Keyslot's Lower Behind Other Windows copy
 preference. `AutoType1.Lower(s window_path) → b` accepts only the current Keyslot

@@ -300,15 +300,67 @@ class VaultIndicator extends QuickSettings.SystemIndicator {
 
 export default class KeyslotExtension extends Extension {
     enable() {
+        this._shortcutSerial = (this._shortcutSerial ?? 0) + 1;
+        this._shortcutCancellable = new Gio.Cancellable();
+        this._shortcutFocusId = global.display.connect('notify::focus-window', () => this._shortcutSerial++);
         this._indicator = new VaultIndicator();
         Main.panel.statusArea.quickSettings.addExternalIndicator(this._indicator);
         this._target = new AutoTypeTarget(() => this._indicator?.quickSettingsItems[0]?._proxy?.g_name_owner);
         this._settings = this.getSettings();
         Main.wm.addKeybinding('auto-type', this._settings, Meta.KeyBindingFlags.NONE,
-            Shell.ActionMode.NORMAL, () => this._indicator.quickSettingsItems[0]._call('AutoType'));
+            Shell.ActionMode.NORMAL, () => this._autoTypeShortcut());
+    }
+
+    _autoTypeShortcut() {
+        const focused = global.display.focus_window;
+        const serial = ++this._shortcutSerial;
+        if (!focused || Main.sessionMode.isLocked)
+            return;
+        const current = () => this._indicator && serial === this._shortcutSerial &&
+            global.display.focus_window === focused && !Main.sessionMode.isLocked;
+        const invoke = () => {
+            if (current())
+                this._indicator.quickSettingsItems[0]._call('AutoType');
+        };
+        // The recorder must never become an Auto-Type destination, including while inhibition is pending.
+        Gio.DBus.session.call('org.freedesktop.DBus', '/org/freedesktop/DBus', 'org.freedesktop.DBus',
+            'NameHasOwner', new GLib.Variant('(s)', ['org.gnome.Shell.Extensions']),
+            new GLib.VariantType('(b)'), Gio.DBusCallFlags.NO_AUTO_START, 1000, this._shortcutCancellable,
+            (connection, result) => {
+                try {
+                    const [running] = connection.call_finish(result).deep_unpack();
+                    if (!current())
+                        return;
+                    if (!running) {
+                        invoke();
+                        return;
+                    }
+                    connection.call('org.freedesktop.DBus', '/org/freedesktop/DBus', 'org.freedesktop.DBus',
+                        'GetConnectionUnixProcessID', new GLib.Variant('(s)', ['org.gnome.Shell.Extensions']),
+                        new GLib.VariantType('(u)'), Gio.DBusCallFlags.NO_AUTO_START, 1000, this._shortcutCancellable,
+                        (bus, reply) => {
+                            try {
+                                const [preferencesPid] = bus.call_finish(reply).deep_unpack();
+                                const pid = focused.get_pid();
+                                if (current() && pid > 0 && pid !== preferencesPid)
+                                    invoke();
+                            } catch {
+                                // Failed owner/focus metadata cancels this invocation; no delayed replay.
+                            }
+                        });
+                } catch {
+                    // Do not start Auto-Type when recorder ownership cannot be established.
+                }
+            });
     }
 
     disable() {
+        this._shortcutSerial++;
+        this._shortcutCancellable?.cancel();
+        this._shortcutCancellable = null;
+        if (this._shortcutFocusId)
+            global.display.disconnect(this._shortcutFocusId);
+        this._shortcutFocusId = 0;
         Main.wm.removeKeybinding('auto-type');
         this._settings = null;
         this._target?.destroy();
